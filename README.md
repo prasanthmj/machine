@@ -57,7 +57,7 @@ func (*OrderService) Execute(t interface{})error{
 ```
 
 ## Delayed jobs
-```
+```go
 task := &ConfirmationEmail{email}
 
 job := machine.NewJob(task).After(5*time.Minutes)
@@ -65,3 +65,7 @@ jq.QueueUp(job)
 
 ```
 
+## Stop the queue (and the workers)
+```go
+jq.Stop()
+```
