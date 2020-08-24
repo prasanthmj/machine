@@ -116,3 +116,26 @@ func TestDelayedJob(t *testing.T) {
 	}
 
 }
+func TestRecurringJob(t *testing.T) {
+	myte := mtest.NewTaskExecutor(t)
+
+	jq, err := machine.New("redis://127.0.0.1:6379")
+	if err != nil {
+		t.Fatalf("Error creating queue %v", err)
+	}
+	jq.Start()
+	jq.Register(&mtest.TestTask{}, myte)
+	task := mtest.CreateTestTask(myte).WithTaskTime(time.Duration(rand.Intn(100)) * time.Millisecond)
+	job := machine.NewJob(task)
+	jq.ScheduleRecurringJob(job, 200*time.Millisecond)
+	<-time.After(1 * time.Second)
+	jq.Stop()
+	myte.PrintStatus()
+
+	if !myte.AssertAllTasksExecutedAtleastOnce() {
+		t.Errorf("Expected task to execute at least once")
+	}
+	if myte.GetExecutionCount(task.GetTaskID()) < 3 {
+		t.Errorf("Expected the recurring task to execute at leat 3 times ")
+	}
+}
