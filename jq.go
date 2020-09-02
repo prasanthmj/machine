@@ -3,6 +3,7 @@ package machine
 import (
 	machinery "github.com/RichardKnop/machinery/v1"
 	"github.com/RichardKnop/machinery/v1/config"
+	"github.com/RichardKnop/machinery/v1/log"
 	"sync"
 	"time"
 )
@@ -28,6 +29,8 @@ func New(redisURL string) (*JobQueue, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.SetDebug(NewEmptyLog())
+	log.SetInfo(NewEmptyLog())
 
 	jq := &JobQueue{server: server, NumWorkers: 10}
 	jq.te = newTaskExecutor()

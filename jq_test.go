@@ -104,6 +104,7 @@ func TestDelayedJob(t *testing.T) {
 	myte.PrintStatus()
 	if myte.GetExecutionCount(task.GetTaskID()) != 1 {
 		t.Errorf("Delayed task didn't execute ")
+		return
 	}
 
 	time_exec := myte.GetTaskExecutedAt(task.GetTaskID())
